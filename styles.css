@@ -1,0 +1,28 @@
+.cell-row {
+  display: flex;
+}
+
+.cell {
+  width: 70px;
+  height: 25px;
+  border: 0.2px solid rgb(0, 0, 0);
+  box-sizing: border-box;
+}
+.cell:focus {
+  border: blue;
+  background: rgb(238, 238, 238);
+}
+.cell.headerCell {
+  text-align: center;
+  background: lightgrey;
+}
+#refresh-button{
+    color: white;
+    background: green;
+    padding: 10px;
+    border: none;
+    margin-bottom: 5px;
+    cursor: pointer;
+    
+
+}
