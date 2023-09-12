@@ -1,6 +1,6 @@
+// Selecting elements from the HTML
 const spreadSheetContainer = document.querySelector("#spreadsheet-container");
 const refreshButton = document.querySelector("#refresh-button");
-
 
 // Constants for spreadsheet dimensions and initialization
 const ROWS = 101;
@@ -46,12 +46,11 @@ class Cell {
     this.cellID = cellID;
   }
 }
+
 // Event handler for the refresh button click
 refreshButton.onclick = function (e) {
-      checkForFormulas(); // Call the function to check for formulas in cells
+      checkForFormulas();
 };
-
-
 
 // Function to check for formulas in cells
 function checkForFormulas() {
@@ -62,12 +61,15 @@ function checkForFormulas() {
       if (typeof cell.data === "string") {
         const toInt = parseInt(cell.data);
         const cellElement = document.getElementById(cell.cellID);
-        data = cell.data;   // Get the cell's data
+        data = cell.data; // Get the cell's data
 
         if (!isNaN(toInt)) {
           console.log(toInt);
         }
-      
+        if (data.includes("=sum")) {
+          console.log("SUM");
+        }
+
         // Check for mathematical operations (+, -, *, /)
         if (cell.data.includes("+")) {
           cells = data.split("+");
@@ -121,31 +123,42 @@ function checkForFormulas() {
 newSpreadSheet();
 renderSpreadSheet();
 
+
 // Function to create a new spreadsheet data structure
 function newSpreadSheet() {
   for (let r = 0; r < ROWS; r++) {
     let spreadsheetRow = [];
     for (let c = 0; c < COLUMNS; c++) {
-      let isHeader = false;
-      let disabled = false;
+      isHeader = false;
+      disabled = false;
       let cellData = "";
 
-      // Assign cell data based on row and column values
+    // Assign cell data based on row and column values
       if (c === 0) {
         isHeader = true;
         disabled = true;
         cellData = r;
       }
+
+        // Calculate cell data for header cells (e.g., column labels)
       if (r === 0) {
         disabled = true;
         isHeader = true;
-        // Calculate cell data for header cells (e.g., column labels)
-          }
+
+        c2 = c - 1;
+
+        if (c <= 26) {
+          cellData = alphabet[c2];
+        } else {
+          cellData = alphabet[Math.floor(c2 / 26) - 1] + alphabet[c2 % 26];
+        }
+      }
       if (c === 0 && r === 0) {
         cellData = "";
       }
 
-      const cellID = r + "x" + c;
+      cellID = r + "x" + c;
+
       const cell = new Cell(isHeader, disabled, cellData, c, r, cellID);
       spreadsheetRow.push(cell);
     }
@@ -175,7 +188,6 @@ function handleCellClick(cell) {
   console.log(cell.cellID);
 }
 
-// Event handler for cell data change
 function handleOnChange(data2, cell) {
   cell.data = data2;
 }
@@ -187,6 +199,7 @@ function renderSpreadSheet() {
     rowContainerElement.className = "cell-row";
     for (let i2 = 0; i2 < spreadsheet[i].length; i2++) {
       const cell = spreadsheet[i][i2];
+
       rowContainerElement.append(createCellElement(cell, cell.cellID));
     }
     spreadSheetContainer.append(rowContainerElement);
